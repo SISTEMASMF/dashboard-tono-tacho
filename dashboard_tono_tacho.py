@@ -13,6 +13,7 @@ for col in ["% Aprobado", "% Consecionado", "% Rechazado"]:
         df[col] = df[col] * 100
 
 st.sidebar.markdown("### 🗂️ Filtros")
+tipos_partida = ["Aprobado", "Consecionado", "Rechazado"]
 tipo_partida = st.sidebar.multiselect("Selecciona tipo(s):", tipos_partida, default=tipos_partida)
 df_filtrado = df[df["Semana"].isin(semana_seleccionada)]
 
