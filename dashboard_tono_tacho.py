@@ -36,7 +36,7 @@ col2.metric("% Aprobado promedio", f'{df_filtrado["% Aprobado"].mean():.2f}%')
 col3.metric("% Consecionado promedio", f'{df_filtrado["% Consecionado"].mean():.2f}%')
 col4.metric("% Rechazado promedio", f'{df_filtrado["% Rechazado"].mean():.2f}%')
 
-# Bar chart: total of selected types only
+# Bar chart
 st.markdown("---")
 st.header("📦 Distribución de partidas por semana")
 df_bar = df_filtrado[["Semana"] + tipo_partida]
@@ -46,14 +46,14 @@ color_map = {"Aprobado": "green", "Consecionado": "gold", "Rechazado": "red"}
 fig_bar = px.bar(df_bar_plot, x="Semana", y="Cantidad", color="Tipo", barmode="stack",
                  color_discrete_map=color_map)
 
-# Calculate dynamic totals per week based on filtered types
+# Annotations: totals for selected types
 totales = df_filtrado.groupby("Semana")[tipo_partida].sum().reset_index()
 for _, row in totales.iterrows():
-    fig_bar.add_annotation(x=row["Semana"], y=row[tipo_partida].sum(),
-                           text=f'{int(row[tipo_partida].sum())}',
+    total_val = row[tipo_partida].sum() if isinstance(row[tipo_partida], pd.Series) else sum(row[tipo_partida])
+    fig_bar.add_annotation(x=row["Semana"], y=total_val,
+                           text=f'{int(total_val)}',
                            showarrow=False, font=dict(size=14, color="black"),
                            xanchor="center", yanchor="bottom")
-
 fig_bar.update_layout(yaxis_title="Cantidad de partidas", title_text="")
 st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -67,11 +67,13 @@ fig_line.update_layout(yaxis_title="% Rechazado", xaxis_title="Semana",
                        yaxis_range=[0, max(df_filtrado["% Rechazado"].max()+5,20)], title_text="")
 st.plotly_chart(fig_line, use_container_width=True)
 
-# Donut chart
+# Donut chart with fixed colors
 st.markdown("---")
 st.header("🧭 Distribución general de partidas")
 totales_donut = df_filtrado[tipo_partida].sum()
-fig_donut = go.Figure(data=[go.Pie(labels=totales_donut.index, values=totales_donut.values, hole=0.5,
-                                   marker=dict(colors=["green","gold","red"]))])
+labels = totales_donut.index.tolist()
+values = totales_donut.values.tolist()
+colors = [color_map[label] for label in labels]
+fig_donut = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.5, marker=dict(colors=colors))])
 fig_donut.update_layout(title_text="")
 st.plotly_chart(fig_donut, use_container_width=True)
