@@ -8,12 +8,12 @@ st.set_page_config(layout="wide")
 
 df = pd.read_csv("data.csv")
 
-# Normalizar porcentajes
+# Normalize percentages
 for col in ["% Aprobado", "% Consecionado", "% Rechazado"]:
     if df[col].max() <= 1:
         df[col] *= 100
 
-# Filtros
+# Filters
 st.sidebar.markdown("### 🗂️ Filtros")
 semanas = df["Semana"].dropna().unique().tolist()
 opciones_semanas = ["Todas"] + semanas
@@ -24,10 +24,10 @@ if "Todas" in semana_seleccionada:
 tipos_partida = ["Aprobado", "Consecionado", "Rechazado"]
 tipo_partida = st.sidebar.multiselect("Selecciona tipo(s):", tipos_partida, default=tipos_partida)
 
-# Filtrar dataframe
+# Filter dataframe
 df_filtrado = df[df["Semana"].isin(semana_seleccionada)]
 
-# Título y KPIs
+# Title and KPIs
 st.title("Dashboard de Evaluación del Tono en Tacho")
 st.markdown("### 📊 Indicadores clave")
 col1, col2, col3, col4 = st.columns(4)
@@ -36,25 +36,28 @@ col2.metric("% Aprobado promedio", f'{df_filtrado["% Aprobado"].mean():.2f}%')
 col3.metric("% Consecionado promedio", f'{df_filtrado["% Consecionado"].mean():.2f}%')
 col4.metric("% Rechazado promedio", f'{df_filtrado["% Rechazado"].mean():.2f}%')
 
-# Gráfico de barras
+# Bar chart: total of selected types only
 st.markdown("---")
 st.header("📦 Distribución de partidas por semana")
-df_bar = df_filtrado[["Semana"] + tipo_partida + ["Total partidas evaluadas"]]
-df_bar_plot = pd.melt(df_bar, id_vars=["Semana", "Total partidas evaluadas"], value_vars=tipo_partida,
+df_bar = df_filtrado[["Semana"] + tipo_partida]
+df_bar_plot = pd.melt(df_bar, id_vars=["Semana"], value_vars=tipo_partida,
                       var_name="Tipo", value_name="Cantidad")
 color_map = {"Aprobado": "green", "Consecionado": "gold", "Rechazado": "red"}
 fig_bar = px.bar(df_bar_plot, x="Semana", y="Cantidad", color="Tipo", barmode="stack",
                  color_discrete_map=color_map)
-totales = df_bar.groupby("Semana")["Total partidas evaluadas"].first().reset_index()
+
+# Calculate dynamic totals per week based on filtered types
+totales = df_filtrado.groupby("Semana")[tipo_partida].sum().reset_index()
 for _, row in totales.iterrows():
-    fig_bar.add_annotation(x=row["Semana"], y=row["Total partidas evaluadas"],
-                           text=f'{int(row["Total partidas evaluadas"])}',
+    fig_bar.add_annotation(x=row["Semana"], y=row[tipo_partida].sum(),
+                           text=f'{int(row[tipo_partida].sum())}',
                            showarrow=False, font=dict(size=14, color="black"),
                            xanchor="center", yanchor="bottom")
+
 fig_bar.update_layout(yaxis_title="Cantidad de partidas", title_text="")
 st.plotly_chart(fig_bar, use_container_width=True)
 
-# Gráfico de línea
+# Line chart
 st.markdown("---")
 st.header("📉 Tendencia del % Rechazado")
 fig_line = px.line(df_filtrado, x="Semana", y="% Rechazado", markers=True)
@@ -64,11 +67,11 @@ fig_line.update_layout(yaxis_title="% Rechazado", xaxis_title="Semana",
                        yaxis_range=[0, max(df_filtrado["% Rechazado"].max()+5,20)], title_text="")
 st.plotly_chart(fig_line, use_container_width=True)
 
-# Gráfico de donut
+# Donut chart
 st.markdown("---")
 st.header("🧭 Distribución general de partidas")
-totales = df_filtrado[["Aprobado", "Consecionado", "Rechazado"]].sum()
-fig_donut = go.Figure(data=[go.Pie(labels=totales.index, values=totales.values, hole=0.5,
+totales_donut = df_filtrado[tipo_partida].sum()
+fig_donut = go.Figure(data=[go.Pie(labels=totales_donut.index, values=totales_donut.values, hole=0.5,
                                    marker=dict(colors=["green","gold","red"]))])
 fig_donut.update_layout(title_text="")
 st.plotly_chart(fig_donut, use_container_width=True)
