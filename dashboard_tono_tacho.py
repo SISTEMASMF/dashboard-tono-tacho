@@ -70,7 +70,7 @@ st.plotly_chart(fig_line, use_container_width=True)
 # Donut chart with fixed colors
 st.markdown("---")
 st.header("🧭 Distribución general de partidas")
-totales_donut = df_filtrado[tipo_partida].sum()
+totales_donut = df_filtrado[["Aprobado", "Consecionado", "Rechazado"]].sum()
 labels = totales_donut.index.tolist()
 values = totales_donut.values.tolist()
 colors = [color_map[label] for label in labels]
