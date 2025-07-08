@@ -18,9 +18,6 @@ section.main > div {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
-[data-testid="stMetricValue"] {
-    color: #002060;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -39,9 +36,6 @@ section.main > div {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
-[data-testid="stMetricValue"] {
-    color: #002060;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -57,7 +51,7 @@ for col in ["% Aprobado", "% Consecionado", "% Rechazado"]:
 st.sidebar.markdown("### 🗂️ Filtros")
 semanas = df["Semana"].unique()
 tipos_partida = ["Aprobado", "Consecionado", "Rechazado"]
-semana_seleccionada = 
+semana_seleccionada = st.sidebar.multiselect("Selecciona semana(s):", semanas, default=semanas)
 # Filtro de semanas con botón "Seleccionar todas"
 st.sidebar.markdown("### 🗂️ Filtros")
 semanas = df["Semana"].dropna().unique().tolist()
