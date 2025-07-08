@@ -15,7 +15,22 @@ for col in ["% Aprobado", "% Consecionado", "% Rechazado"]:
 st.sidebar.markdown("### 🗂️ Filtros")
 semanas = df["Semana"].unique()
 tipos_partida = ["Aprobado", "Consecionado", "Rechazado"]
-semana_seleccionada = st.sidebar.multiselect("Selecciona semana(s):", semanas, default=semanas)
+semana_seleccionada = 
+# Filtro de semanas con botón "Seleccionar todas"
+st.sidebar.markdown("### 🗂️ Filtros")
+semanas = df["Semana"].dropna().unique().tolist()
+if 'todas_las_semanas' not in st.session_state:
+    st.session_state["todas_las_semanas"] = semanas
+
+if st.sidebar.button("Seleccionar todas las semanas"):
+    st.session_state["todas_las_semanas"] = semanas
+
+semana_seleccionada = st.sidebar.multiselect(
+    "Selecciona semana(s):",
+    semanas,
+    default=st.session_state["todas_las_semanas"],
+    key="semana_filtro"
+)
 tipo_partida = st.sidebar.multiselect("Selecciona tipo(s):", tipos_partida, default=tipos_partida)
 df_filtrado = df[df["Semana"].isin(semanas)]
 
