@@ -4,42 +4,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-st.markdown("""
-<style>
-body {
-    background-color: #f5f7fa;
-}
-section.main > div {
-    padding-top: 1rem;
-    padding-bottom: 2rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
-st.markdown("""
-<style>
-body {
-    background-color: #f5f7fa;
-}
-section.main > div {
-    padding-top: 1rem;
-    padding-bottom: 2rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
 st.set_page_config(layout="wide")
 
 df = pd.read_csv("data.csv")
@@ -51,14 +15,10 @@ for col in ["% Aprobado", "% Consecionado", "% Rechazado"]:
 st.sidebar.markdown("### 🗂️ Filtros")
 semanas = df["Semana"].unique()
 tipos_partida = ["Aprobado", "Consecionado", "Rechazado"]
-semanas = df["Semana"].unique().tolist()
 semana_seleccionada = st.sidebar.multiselect("Selecciona semana(s):", semanas, default=semanas)
-# Filtro de semanas con botón "Seleccionar todas"
-st.sidebar.markdown("### 🗂️ Filtros")
-semanas = df["Semana"].dropna().unique().tolist()
-semana_seleccionada = st.sidebar.multiselect(
-    "Selecciona semana(s):",
-    semanas,
+tipo_partida = st.sidebar.multiselect("Selecciona tipo(s):", tipos_partida, default=tipos_partida)
+df_filtrado = df[df["Semana"].isin(semanas)]
+
 st.title("Dashboard de Evaluación del Tono en Tacho")
 st.markdown("### 📊 Indicadores clave")
 col1, col2, col3, col4 = st.columns(4)
