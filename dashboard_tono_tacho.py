@@ -13,13 +13,6 @@ for col in ["% Aprobado", "% Consecionado", "% Rechazado"]:
         df[col] = df[col] * 100
 
 st.sidebar.markdown("### 🗂️ Filtros")
-semanas = df["Semana"].unique()
-tipos_partida = ["Aprobado", "Consecionado", "Rechazado"]
-semanas = df["Semana"].dropna().unique().tolist()
-semana_seleccionada = st.sidebar.multiselect("Selecciona semana(s):", ["Todas"] + semanas, default=["Todas"])
-if "Todas" in semana_seleccionada:
-    semana_seleccionada = semanas
-:", semanas, default=semanas)
 tipo_partida = st.sidebar.multiselect("Selecciona tipo(s):", tipos_partida, default=tipos_partida)
 df_filtrado = df[df["Semana"].isin(semana_seleccionada)]
 
