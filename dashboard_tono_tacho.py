@@ -4,6 +4,48 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+st.markdown("""
+<style>
+body {
+    background-color: #f5f7fa;
+}
+section.main > div {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+[data-testid="stMetricValue"] {
+    color: #002060;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+st.markdown("""
+<style>
+body {
+    background-color: #f5f7fa;
+}
+section.main > div {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+[data-testid="stMetricValue"] {
+    color: #002060;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 st.set_page_config(layout="wide")
 
 df = pd.read_csv("data.csv")
